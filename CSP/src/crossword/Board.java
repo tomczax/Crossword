@@ -15,7 +15,7 @@ public class Board {
 	public int wordsMatched = 0;
 	private int row;
 	private int column;
-	private String currentWord = "";
+	// private String currentWord = "";
 
 	public Board() {
 		this.board = new char[Constants.HEIGHT][Constants.WIDTH];
@@ -29,22 +29,18 @@ public class Board {
 
 	public void insertFirstWord() {
 		String keyword = "";
-		for (String w : WordsList.wordsList) {
-			if (w.length() <= Constants.WIDTH) {
-				keyword = w;
-				break;
-			}
-		}
-		while (keyword.length() > Constants.WIDTH) {
-			int random = ThreadLocalRandom.current().nextInt(0, WordsList.wordsList.size());
-			String word = WordsList.wordsList.get(random);
-		}
-		// this.row = ThreadLocalRandom.current().nextInt(0, Constants.HEIGHT);
-		// this.column = ThreadLocalRandom.current().nextInt(0,
-		// Constants.WIDTH);
+		// for (String w : WordsList.wordsList) {
+		// if (w.length() <= Constants.WIDTH) {
+		// keyword = w;
+		// break;
+		// }
+		// }
+		// while (keyword.length() > Constants.WIDTH) {
+		int random = ThreadLocalRandom.current().nextInt(0, WordsList.wordsList.size());
+		keyword = WordsList.wordsList.get(random);
+		// }
 		int row = 0;
-//		int row = (int) Math.ceil(Constants.HEIGHT / 2);
-		this.row = row;
+		// this.row = row;
 
 		for (int i = 0; i < keyword.length(); i++) {
 			this.board[row][i] = keyword.charAt(i);
@@ -89,10 +85,8 @@ public class Board {
 				this.displayBoard();
 				usedWords.add(w);
 				if (bactracking()) {
-//					System.out.println("weszlo do bactracking true");
 					return true;
 				} else {
-//					System.out.println("w elsie");
 					this.solutions.remove(this.solutions.size() - 1);
 					this.board = this.solutions.get(0);
 					usedWords.remove(w);
@@ -102,17 +96,6 @@ public class Board {
 		}
 
 		return false;
-	}
-
-	public char[][] getBoard() {
-		return board;
-	}
-
-	public void clearOccupationMap() {
-		for (int r = 0; r < Constants.HEIGHT; r++) {
-			for (int c = 0; c < Constants.WIDTH; c++)
-				board[r][c] = Constants.DEFAULT_EMPTY_CELL;
-		}
 	}
 
 	public boolean wordFitsRow(String word, int row) {
@@ -198,27 +181,56 @@ public class Board {
 				return new int[] { r, 0, Constants.HORIZONTAL };
 			}
 
-			for (int c = 0; c < Constants.WIDTH; c++) {
-				boolean isColumnValid = false;
-				if (c == 0) {
-					if (!isColumnFull(0) && !isColumnFull(1)) {
-						isColumnValid = true;
-					}
-				} else if (c == Constants.WIDTH - 1) {
-					if (!isColumnFull(Constants.WIDTH - 1) && !isColumnFull(Constants.WIDTH - 2)) {
-						isColumnValid = true;
-					}
-				} else {
-					if (!isColumnFull(c) && !isColumnFull(c - 1) && !isColumnFull(c + 1)) {
-						isColumnValid = true;
-					}
-				}
+			// if the row is filled with at least one word
+//			int consecutiveEmpty = 0;
+//			int emptyColumn;
+//			for (int column = 0; column < Constants.WIDTH; column++) {
+//				emptyColumn = column;
+//				while (this.board[r][emptyColumn] == Constants.DEFAULT_EMPTY_CELL) {
+//					consecutiveEmpty++;
+//					if (consecutiveEmpty > 2) {
+//						if (r == 0) {
+//							if (this.board[r + 1][column + 1] == Constants.DEFAULT_EMPTY_CELL) {
+//								return new int[] { r, column + 1, Constants.HORIZONTAL };
+//							}
+//						} else if (r == Constants.HEIGHT - 1) {
+//							if (this.board[r - 1][column + 1] == Constants.DEFAULT_EMPTY_CELL) {
+//								return new int[] { r, column + 1, Constants.HORIZONTAL };
+//							}
+//						} else {
+//							if (this.board[r + 1][column + 1] == Constants.DEFAULT_EMPTY_CELL
+//									&& this.board[r - 1][column + 1] == Constants.DEFAULT_EMPTY_CELL) {
+//								return new int[] { r, column + 1, Constants.HORIZONTAL };
+//							}
+//						}
+//					}
+//					emptyColumn++;
+//				}
+//				consecutiveEmpty = 0;
+//			}
 
-				if (isColumnValid) {
-					return new int[] { 0, c, Constants.VERTICAL };
-				}
+		}
 
+		for (int c = 0; c < Constants.WIDTH; c++) {
+			boolean isColumnValid = false;
+			if (c == 0) {
+				if (!isColumnFull(0) && !isColumnFull(1)) {
+					isColumnValid = true;
+				}
+			} else if (c == Constants.WIDTH - 1) {
+				if (!isColumnFull(Constants.WIDTH - 1) && !isColumnFull(Constants.WIDTH - 2)) {
+					isColumnValid = true;
+				}
+			} else {
+				if (!isColumnFull(c) && !isColumnFull(c - 1) && !isColumnFull(c + 1)) {
+					isColumnValid = true;
+				}
 			}
+
+			if (isColumnValid) {
+				return new int[] { 0, c, Constants.VERTICAL };
+			}
+
 		}
 		return new int[] { -1 };
 	}
@@ -244,6 +256,12 @@ public class Board {
 			if (consecutiveLetters >= 2) {
 				return true;
 			}
+			// if( column != 0 ) {
+			// if(this.board[i][column-1] != Constants.DEFAULT_EMPTY_CELL) {
+			// return true;
+			// }
+			// }
+
 			if (this.board[i][column] != Constants.DEFAULT_EMPTY_CELL) {
 				consecutiveLetters++;
 			} else {
@@ -265,10 +283,16 @@ public class Board {
 	public static void main(String[] args) {
 		Board b = new Board();
 		b.displayBoard();
+
+		long startTime = System.nanoTime();
 		if (b.bactracking() == false) {
 			System.out.println("no solution");
 		}
+		long endTime = System.nanoTime();
 
+		long duration = (endTime - startTime) / 1000; // to get milliseconds.
+
+		System.out.println(duration);
 		b.displayBoard();
 		System.out.println(b.usedWords);
 	}

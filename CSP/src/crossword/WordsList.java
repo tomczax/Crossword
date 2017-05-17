@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 
 public class WordsList {
 	public static ArrayList<String> wordsList = new ArrayList<String>();
@@ -35,7 +36,7 @@ public class WordsList {
 			}
 			reader.close();
 			Collections.shuffle(WordsList.wordsList);
-			
+			WordsList.wordsList.sort(Comparator.comparing(String::length));
 		} catch (FileNotFoundException e) {
 			System.out.println(e);
 			System.out.println("The file cannot be found");
@@ -47,5 +48,6 @@ public class WordsList {
 	
 //	public static void main(String[] args) {
 //		System.out.println(WordsList.wordsList.size());
+//		System.out.println(WordsList.wordsList);
 //	}
 }
